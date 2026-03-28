@@ -1,0 +1,71 @@
+{
+  "entities": {
+    "suggestion": {
+      "title": "Suggestion",
+      "description": "User feedback and product ideas.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the user." },
+        "idea": { "type": "string", "description": "The product idea or suggestion." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the suggestion was submitted." },
+        "userId": { "type": "string", "description": "The UID of the user who submitted (if logged in)." }
+      },
+      "required": ["name", "idea", "createdAt"]
+    },
+    "prebooking": {
+      "title": "Pre-booking",
+      "description": "Pre-orders for upcoming products.",
+      "type": "object",
+      "properties": {
+        "productName": { "type": "string", "description": "Name of the pre-booked product." },
+        "userEmail": { "type": "string", "format": "email", "description": "Email of the user." },
+        "userName": { "type": "string", "description": "Name of the user." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the pre-booking was made." },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "cancelled"], "description": "Current status of the pre-order." }
+      },
+      "required": ["productName", "userEmail", "userName", "createdAt", "status"]
+    },
+    "user": {
+      "title": "User",
+      "description": "User profile and role information.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "displayName": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    },
+    "product": {
+      "title": "Product",
+      "description": "Product information for the shop.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "price": { "type": "string" },
+        "category": { "type": "string" },
+        "desc": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "category", "desc", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/suggestions/{suggestionId}": {
+      "schema": "suggestion",
+      "description": "Collection of user suggestions."
+    },
+    "/prebookings/{prebookingId}": {
+      "schema": "prebooking",
+      "description": "Collection of product pre-bookings."
+    },
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "User profiles and roles."
+    },
+    "/products/{productId}": {
+      "schema": "product",
+      "description": "Collection of products for the shop."
+    }
+  }
+}

@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+        (request.auth.token.email == "saigomonarch0@gmail.com" && request.auth.token.email_verified == true)
+      );
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidSuggestion(data) {
+      return data.keys().hasAll(['name', 'idea', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.idea is string && data.idea.size() > 0 && data.idea.size() < 2000 &&
+             data.createdAt is string;
+    }
+
+    function isValidPrebooking(data) {
+      return data.keys().hasAll(['productName', 'userEmail', 'userName', 'createdAt', 'status']) &&
+             data.productName is string && data.productName.size() > 0 &&
+             data.userEmail is string && isValidEmail(data.userEmail) &&
+             data.userName is string && data.userName.size() > 0 &&
+             data.createdAt is string &&
+             data.status in ['pending', 'confirmed', 'cancelled'];
+    }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'price', 'category', 'desc', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 &&
+             data.price is string && data.price.size() > 0 &&
+             data.category is string && data.category.size() > 0 &&
+             data.desc is string && data.desc.size() > 0 &&
+             data.createdAt is string;
+    }
+
+    // ===============================================================
+    // Match Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(userId) && request.resource.data.role == 'user';
+      allow update: if isAdmin();
+    }
+
+    match /suggestions/{suggestionId} {
+      allow read: if isAdmin();
+      allow create: if isValidSuggestion(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /prebookings/{prebookingId} {
+      allow read: if isAdmin();
+      allow create: if isValidPrebooking(request.resource.data);
+      allow update, delete: if isAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidProduct(request.resource.data);
+      allow delete: if isAdmin();
+    }
+  }
+}
