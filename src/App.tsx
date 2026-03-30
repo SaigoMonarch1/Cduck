@@ -22,7 +22,8 @@ import {
   Trash2,
   CheckCircle,
   Clock,
-  User
+  User,
+  Music
 } from 'lucide-react';
 import { cn } from './lib/utils';
 import { auth, db } from './firebase';
@@ -974,8 +975,23 @@ export default function App() {
         </p>
       </div>
 
+      {/* Music Bar */}
+      <div className="flex justify-center pt-6 relative z-40">
+        <a 
+          href="https://c-music-gamma.vercel.app/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="bg-stone-900/5 backdrop-blur-md border border-stone-200 text-stone-900 px-6 py-2.5 rounded-full flex items-center gap-3 shadow-sm hover:bg-stone-900 hover:text-white transition-all duration-500 group"
+        >
+          <Music size={16} className="group-hover:rotate-12 transition-transform" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Experience C-Music</span>
+          <div className="w-px h-3 bg-stone-300 group-hover:bg-stone-700" />
+          <ArrowRight size={14} className="opacity-50 group-hover:translate-x-1 transition-transform" />
+        </a>
+      </div>
+
       <Navbar activePage={page} setPage={setPage} user={user} />
-      
+
       <main>
         <AnimatePresence mode="wait">
           {page === 'home' && <HomePage key="home" onNext={() => setPage('journey')} />}
