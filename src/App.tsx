@@ -87,7 +87,7 @@ const Navbar = ({ activePage, setPage, user }: { activePage: Page, setPage: (p: 
     { id: 'details', label: 'Details', icon: <Info size={18} /> },
   ];
 
-  const isAdmin = user?.email === 'saigomonarch0@gmail.com';
+  const isAdmin = user?.email === 'saigomonarch@gmail.com';
 
   return (
     <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white/80 backdrop-blur-xl border border-stone-200 px-4 py-2 rounded-full shadow-2xl flex items-center gap-1">
@@ -571,7 +571,7 @@ const AdminPanel = ({ user }: { user: FirebaseUser | null, key?: string }) => {
   const [showAddProduct, setShowAddProduct] = useState(false);
 
   useEffect(() => {
-    if (user?.email !== 'saigomonarch0@gmail.com') return;
+    if (user?.email !== 'saigomonarch@gmail.com') return;
 
     const qS = query(collection(db, 'suggestions'), orderBy('createdAt', 'desc'));
     const unsubS = onSnapshot(qS, (snap) => {
@@ -623,7 +623,7 @@ const AdminPanel = ({ user }: { user: FirebaseUser | null, key?: string }) => {
     await updateDoc(doc(db, 'prebookings', id), { status });
   };
 
-  if (user?.email !== 'saigomonarch0@gmail.com') {
+  if (user?.email !== 'saigomonarch@gmail.com') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50 px-6">
         <div className="max-w-md w-full bg-white p-12 rounded-[40px] text-center shadow-xl">
@@ -947,7 +947,7 @@ export default function App() {
   // Handle URL routing for /admin
   useEffect(() => {
     const path = window.location.pathname;
-    if (path === '/admin') {
+    if (path === '/admin' || path === '/admin/') {
       setPage('admin');
     }
   }, []);
